@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.sang.mapper.plant.OutPlantMapper">
+
+    <select id="getOutPlant" resultType="org.sang.bean.plant.qo.OutPlantQo">
+        SELECT
+            i.*,
+            pt.name as typeName,
+            pu.name as unitName,
+            oa.name as areaName
+        from out_plant i
+        left join plant_type pt on i.plantTypeId = pt.id
+        left join plant_unit pu on i.plantUnitId = pu.id
+        left join out_area oa on i.areaId = oa.id
+    </select>
+
+    <select id="getOutPlantCount" resultType="int">
+        SELECT count(*) FROM out_plant
+        <where>
+            <if test="keywords!=null and keywords!=''" >
+                AND areaId =#{keywords}
+            </if>
+        </where>
+    </select>
+
+    <select id="getAllOutPlant" resultType="org.sang.bean.plant.qo.OutPlantQo">
+        SELECT
+        i.*,
+        pt.name as typeName,
+        pu.name as unitName,
+        oa.name as areaName
+        from out_plant i
+        left join plant_type pt on i.plantTypeId = pt.id
+        left join plant_unit pu on i.plantUnitId = pu.id
+        left join out_area oa on i.areaId = oa.id
+        <where>
+            <if test="keywords!=null and keywords!=''" >
+                AND i.areaId =#{keywords}
+            </if>
+        </where>
+        ORDER BY i.id DESC limit #{start},#{count};
+    </select>
+
+    <insert id="addOutPlant" parameterType="org.sang.bean.plant.OutPlant">
+        INSERT INTO out_plant
+        (areaId, name, plantTypeId, age, number, plantUnitId, habit)
+        values (#{areaId}, #{name}, #{plantTypeId}, #{age}, #{number}, #{plantUnitId}, #{habit})
+    </insert>
+
+    <select id="getOutPlantById" parameterType="int" resultType="org.sang.bean.plant.qo.OutPlantQo">
+        SELECT
+            i.*,
+            pt.name as typeName,
+            pu.name as unitName,
+            oa.name as areaName
+        from out_plant i
+        left join plant_type pt on i.plantTypeId = pt.id
+        left join plant_unit pu on i.plantUnitId = pu.id
+        left join out_area oa on i.areaId = oa.id
+    </select>
+
+    <delete id="deleteOutPlant">
+        DELETE FROM out_plant WHERE id IN
+        <foreach collection="ids" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </delete>
+
+    <update id="updateOutPlant">
+        UPDATE out_plant  SET areaId=#{areaId}, name=#{name}, plantTypeId=#{plantTypeId}, age=#{age}, number=#{number}, plantUnitId=#{plantUnitId}, habit=#{habit} WHERE id=#{id}
+    </update>
+</mapper>

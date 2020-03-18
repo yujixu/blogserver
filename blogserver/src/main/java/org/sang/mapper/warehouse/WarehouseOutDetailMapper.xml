@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.sang.mapper.warehouse.WarehouseOutDetailMapper">
+    <select id="getWarehouseOutDetailByPId" parameterType="int" resultType="org.sang.bean.warehouse.qo.WarehouseOutDetailQo">
+        SELECT
+            w.*,
+            m.number as materialNumber,
+            m.name as materialName,
+            m.baseUnitName as baseUnit,
+            m.materialTypeName as materialType,
+            m.materialModel as materialModel,
+            e.name as applicantName,
+            wo.outTime as outTime,
+            uad.useNum as useNum
+        FROM
+            warehouse_out_detail w
+            left join use_apply_detail uad on w.useApplyDetailId = uad.id
+            left join warehouse_stock ws on w.stockId = ws.id
+            left join material m on ws.materialId = m.id
+            left join use_apply ua on uad.pId = ua.id
+            left join employee e on ua.applicantId = e.id
+            left join warehouse_out wo on w.pId = wo.id
+        where
+            w.pId=#{pid}
+    </select>
+
+    <select id="getWarehouseOutDetailByStockId" parameterType="int" resultType="org.sang.bean.warehouse.qo.WarehouseOutDetailQo">
+        SELECT
+            w.*,
+            m.number as materialNumber,
+            m.name as materialName,
+            m.baseUnitName as baseUnit,
+            m.materialTypeName as materialType,
+            m.materialModel as materialModel,
+            e.name as applicantName,
+            wo.outTime as outTime,
+            uad.useNum as useNum
+        FROM
+            warehouse_out_detail w
+            left join use_apply_detail uad on w.useApplyDetailId = uad.id
+            left join warehouse_stock ws on w.stockId = ws.id
+            left join material m on ws.materialId = m.id
+            left join use_apply ua on uad.pId = ua.id
+            left join employee e on ua.applicantId = e.id
+            left join warehouse_out wo on w.pId = wo.id
+        where
+            w.stockId=#{stockId}
+    </select>
+
+    <insert id="addWarehouseOutDetails" parameterType="java.util.List">
+        INSERT INTO warehouse_out_detail
+        (stockId, useApplyDetailId, rest, pId)
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            #{item.stockId},
+            #{item.useApplyDetailId},
+            #{item.rest},
+            #{item.pId}
+            )
+        </foreach>
+    </insert>
+
+    <delete id="deleteWarehouseOutDetails">
+        DELETE FROM warehouse_out_detail WHERE pId IN
+        <foreach collection="pIds" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

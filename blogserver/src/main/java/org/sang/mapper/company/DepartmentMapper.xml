@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.sang.mapper.company.DepartmentMapper">
+
+    <select id="getDepartment" resultType="org.sang.bean.company.Department">
+        SELECT* from department
+    </select>
+
+    <select id="getDepartmentCount" resultType="int">
+        SELECT count(*) FROM department
+        <where>
+            <if test="keywords!=null" >
+                AND name LIKE concat('%',#{keywords},'%')
+            </if>
+        </where>
+    </select>
+
+    <select id="getAllDepartment" resultType="org.sang.bean.company.Department">
+        SELECT* FROM department
+        <where>
+            <if test="keywords!=null">
+                AND name LIKE concat('%',#{keywords},'%')
+            </if>
+        </where>
+        ORDER BY id DESC limit #{start},#{count};
+    </select>
+
+    <insert id="addDepartment" parameterType="org.sang.bean.company.Department">
+        INSERT INTO department
+        (name, number)
+        values (#{name},#{number})
+    </insert>
+
+    <select id="getDepartmentById" parameterType="int" resultType="org.sang.bean.company.Department">
+        SELECT* from department where id=#{id}
+    </select>
+
+    <delete id="deleteDepartment">
+        DELETE FROM department WHERE id IN
+        <foreach collection="ids" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </delete>
+
+    <update id="updateDepartment">
+        UPDATE department  SET name=#{name},number=#{number} WHERE id=#{id}
+    </update>
+</mapper>

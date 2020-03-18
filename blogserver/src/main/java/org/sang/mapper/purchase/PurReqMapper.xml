@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.sang.mapper.purchase.PurReqMapper">
+    <insert id="addNewPurReq" parameterType="org.sang.bean.purchase.PurReq" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO purReq SET number=#{number},name=#{name},state=#{state}
+    </insert>
+
+    <select id="getPurReqCount" resultType="int">
+        SELECT count(*) FROM purreq
+        <where>
+            <if test="keywords!=null" >
+                AND name LIKE concat('%',#{keywords},'%')
+            </if>
+        </where>
+    </select>
+
+    <select id="getPurReq" resultType="org.sang.bean.purchase.PurReq">
+        SELECT* FROM purreq
+        <where>
+            <if test="keywords!=null">
+                AND name LIKE concat('%',#{keywords},'%')
+            </if>
+        </where>
+        ORDER BY id DESC limit #{start},#{count};
+    </select>
+
+    <select id="getPurReqById" parameterType="int" resultType="org.sang.bean.purchase.PurReq">
+        SELECT* from purreq where id=#{id}
+    </select>
+
+    <delete id="deletePurReqById">
+        DELETE FROM purreq WHERE id IN
+        <foreach collection="ids" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </delete>
+
+    <update id="submitPurReq">
+        UPDATE purreq  SET state="EXCUTE" WHERE id=#{id}
+    </update>
+
+    <select id="getExcutePurReq" resultType="org.sang.bean.purchase.PurReq">
+        SELECT* FROM purreq where state = 'EXCUTE'
+    </select>
+
+    <update id="updatePurReq">
+        UPDATE purreq  SET number=#{number},name=#{name},state=#{state}
+        where id = #{id}
+    </update>
+
+    <update id="check">
+        UPDATE purreq SET state='CLOSE' WHERE id=#{id}
+    </update>
+
+</mapper>

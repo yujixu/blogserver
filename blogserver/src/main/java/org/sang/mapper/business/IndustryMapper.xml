@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.sang.mapper.business.IndustryMapper">
+
+    <resultMap id="resultMap" type="org.sang.bean.business.Industry" autoMapping="true">
+        <id column="code" property="code"/>
+        <collection property="list" ofType="org.sang.bean.business.Room" select="org.sang.mapper.business.IndustryMapper.getIndustryList" column="pId">
+        </collection>
+    </resultMap>
+
+    <select id="getIndustry" resultType="org.sang.bean.business.Industry"  resultMap="resultMap">
+        SELECT* from industry
+    </select>
+
+    <select id="getIndustryList" resultType="org.sang.bean.business.Industry">
+        SELECT* from industry where pId=#{pId}
+    </select>
+
+</mapper>

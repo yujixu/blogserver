@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.sang.mapper.purchase.PurContractMapper">
+    <insert id="addNewContract" parameterType="org.sang.bean.purchase.PurContract" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO purcontract
+            (name, number, purType, supplierId, signingdate, employeeId
+            , payment, amount, purreqId, state)
+        values
+            (#{name}, #{number}, #{purType}, #{supplierId}, #{signingdate}, #{employeeId}
+            , #{payment}, #{amount}, #{purreqId}, #{state})
+    </insert>
+
+    <select id="getContractCount" resultType="int">
+        SELECT count(*) FROM purcontract
+        <where>
+            <if test="keywords!=null" >
+                AND name LIKE concat('%',#{keywords},'%')
+            </if>
+        </where>
+    </select>
+
+    <select id="getContract" resultType="org.sang.bean.purchase.PurContract">
+        SELECT* FROM purcontract
+        <where>
+            <if test="keywords!=null">
+                AND name LIKE concat('%',#{keywords},'%')
+            </if>
+        </where>
+        ORDER BY id DESC limit #{start},#{count};
+    </select>
+
+    <select id="getContractById" parameterType="int" resultType="org.sang.bean.purchase.qo.PurContractQo">
+        SELECT
+            p.*,
+            p2.name as purReqName
+        from
+            purcontract p
+            left join purreq p2 on p.purreqId = p2.id
+        where p.id=#{id}
+    </select>
+
+    <delete id="deleteContractById">
+        DELETE FROM purcontract WHERE id IN
+        <foreach collection="ids" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </delete>
+
+    <update id="submitContract">
+        UPDATE purcontract  SET state="EXCUTE" WHERE id=#{id}
+    </update>
+
+    <update id="updatePurContract" parameterType="org.sang.bean.purchase.PurContract">
+        UPDATE purcontract
+        SET
+            name=#{name}, number=#{number}, purType=#{purType}, supplierId=#{supplierId}
+            , signingdate=#{signingdate}, employeeId=#{employeeId}, payment=#{payment}
+            , amount=#{amount}, purreqId=#{purreqId}, state=#{state}, isReceipt=#{isReceipt}
+        WHERE id=#{id}
+    </update>
+
+    <update id="check">
+        UPDATE purcontract SET state='CLOSE' WHERE id=#{id}
+    </update>
+
+    <update id="recheck">
+        UPDATE purcontract SET state='EXCUTE' WHERE id=#{id}
+    </update>
+
+    <update id="receipt">
+        UPDATE purcontract SET isReceipt='1' WHERE id=#{contractId}
+    </update>
+
+    <select id="getClosePurContract" resultType="org.sang.bean.purchase.PurContract">
+        SELECT* FROM purcontract where state = 'CLOSE' and isReceipt=0
+    </select>
+
+</mapper>

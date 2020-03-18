@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.sang.mapper.warehouse.WarehouseStockMapper">
+
+    <insert id="addNewWarehouseStock" parameterType="java.util.List">
+        INSERT INTO warehouse_stock
+        (warehouseId, materialId, stock, price, amount, lastReceiptDate, lastOutDate)
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+                #{item.warehouseId},
+                #{item.materialId},
+                #{item.stock},
+                #{item.price},
+                #{item.amount},
+                #{item.lastReceiptDate},
+                #{item.lastOutDate}
+            )
+        </foreach>
+    </insert>
+
+    <select id="getWarehouseStockCount" resultType="int">
+        SELECT count(*) FROM warehouse_stock
+        <where>
+            <if test="keywords!=null and keywords!=''" >
+                AND warehouseId=#{keywords}
+            </if>
+            and stock>0
+        </where>
+    </select>
+
+    <select id="getZeroStockCount" resultType="int">
+        SELECT count(*) FROM warehouse_stock
+        <where>
+            <if test="keywords!=null and keywords!=''" >
+                AND warehouseId=#{keywords}
+            </if>
+            and stock=0
+        </where>
+    </select>
+
+    <select id="getWarehouseStock" resultType="org.sang.bean.warehouse.qo.WarehouseStockQo">
+        SELECT
+            w.*,
+            m.number as materialNumber,
+            m.name as materialName,
+            m.baseUnitName as baseUnit,
+            m.materialTypeName as materialType,
+            m.materialModel as materialModel,
+            w2.name as warehouseName
+            FROM
+            warehouse_stock w
+            left join material m on w.materialId = m.id
+            left join warehouse w2 on w.warehouseId = w2.id
+        <where>
+            <if test="keywords!=null and keywords!=''">
+                AND w.warehouseId=#{keywords}
+            </if>
+            and w.stock>0
+        </where>
+        ORDER BY w.id DESC limit #{start},#{count};
+    </select>
+
+    <select id="getZeroStock" resultType="org.sang.bean.warehouse.qo.WarehouseStockQo">
+        SELECT
+            w.*,
+            m.number as materialNumber,
+            m.name as materialName,
+            m.baseUnitName as baseUnit,
+            m.materialTypeName as materialType,
+            m.materialModel as materialModel,
+            w2.name as warehouseName
+            FROM
+            warehouse_stock w
+            left join material m on w.materialId = m.id
+            left join warehouse w2 on w.warehouseId = w2.id
+        <where>
+            <if test="keywords!=null and keywords!=''">
+                AND warehouseId =#{keywords}
+            </if>
+            and stock=0
+        </where>
+        ORDER BY id DESC limit #{start},#{count};
+    </select>
+
+    <select id="getStockByIdAndPrice" resultType="org.sang.bean.warehouse.WarehouseStock">
+        SELECT* FROM warehouse_stock
+        <where>
+            <if test="materialId!=null and materialId!=''">
+                AND materialId =#{materialId}
+            </if>
+            <if test="warehouseId!=null and warehouseId!=''">
+                AND warehouseId =#{warehouseId}
+            </if>
+            <if test="price!=null and price!=''">
+                AND price =#{price}
+            </if>
+        </where>
+    </select>
+
+    <select id="getWarehouseStockById" resultType="org.sang.bean.warehouse.WarehouseStock">
+        SELECT* FROM warehouse_stock where id=#{id}
+    </select>
+
+    <select id="getStock" resultType="org.sang.bean.warehouse.qo.WarehouseStockQo">
+        SELECT
+            w.*,
+            m.number as materialNumber,
+            m.name as materialName,
+            m.baseUnitName as baseUnit,
+            m.materialTypeName as materialType,
+            m.materialModel as materialModel,
+            w2.name as warehouseName
+        FROM
+         warehouse_stock w
+         left join material m on w.materialId = m.id
+         left join warehouse w2 on w.warehouseId = w2.id
+        where w.stock>0
+    </select>
+
+    <update id="updateWarehouseStock">
+        <foreach collection="list" item="item" index="index" separator=";">
+            update warehouse_stock
+            <set>
+                lastReceiptDate=#{item.lastReceiptDate},
+                lastOutDate=#{item.lastOutDate},
+                stock=#{item.stock}
+            </set>
+            where id = #{item.id}
+        </foreach>
+    </update>
+
+</mapper>

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.sang.mapper.area.InAreaMapper">
+
+    <select id="getInArea" resultType="org.sang.bean.area.qo.InAreaQo">
+        SELECT o.*, p.name as parkName, b.name as buildingName, f.number as floorNumber
+        FROM in_area o
+        left join park p on o.parkId = p.id
+        left join building b on o.buildingId = b.id
+        left join floor f on o.floorId = f.id
+    </select>
+
+    <select id="getInAreaCount" resultType="int">
+        SELECT count(*) FROM in_area
+        <where>
+            <if test="keywords!=null" >
+                AND name LIKE concat('%',#{keywords},'%')
+            </if>
+        </where>
+    </select>
+
+    <select id="getAllInArea" resultType="org.sang.bean.area.qo.InAreaQo">
+        SELECT o.*, p.name as parkName, b.name as buildingName, f.number as floorNumber
+        FROM in_area o
+        left join park p on o.parkId = p.id
+        left join building b on o.buildingId = b.id
+        left join floor f on o.floorId = f.id
+        <where>
+            <if test="keywords!=null">
+                AND o.name LIKE concat('%',#{keywords},'%')
+            </if>
+        </where>
+        ORDER BY o.id DESC limit #{start},#{count};
+    </select>
+
+    <insert id="addInArea" parameterType="org.sang.bean.area.InArea">
+        INSERT INTO in_area
+        (name, parkId, `explain`, buildingId, floorId)
+        values (#{name}, #{parkId}, #{explain}, #{buildingId}, #{floorId})
+    </insert>
+
+    <select id="getInAreaById" parameterType="int" resultType="org.sang.bean.area.qo.InAreaQo">
+        SELECT o.*, p.name as parkName, b.name as buildingName, f.number as floorNumber
+        FROM in_area o
+        left join park p on o.parkId = p.id
+        left join building b on o.buildingId = b.id
+        left join floor f on o.floorId = f.id
+        where o.id=#{id}
+    </select>
+
+    <delete id="deleteInArea">
+        DELETE FROM in_area WHERE id IN
+        <foreach collection="ids" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </delete>
+
+    <update id="updateInArea">
+        UPDATE in_area  SET name=#{name},parkId=#{parkId}, `explain`=#{explain}, buildingId=#{buildingId}, floorId=#floorId} WHERE id=#{id}
+    </update>
+</mapper>

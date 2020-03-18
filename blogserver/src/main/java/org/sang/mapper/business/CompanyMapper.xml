@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.sang.mapper.business.CompanyMapper">
+
+    <select id="getCompany" resultType="org.sang.bean.business.qo.CompanyQo">
+        SELECT
+            c.*,
+            i.name as industryName,
+            b.name as bankName
+        from
+            company c
+            left join industry i on c.industryId = i.code
+            left join bank b on c.bankId = b.id
+    </select>
+
+    <select id="getCompanyCount" resultType="int">
+        SELECT count(*) FROM company
+        <where>
+            <if test="keywords!=null" >
+                AND COName LIKE concat('%',#{keywords},'%')
+            </if>
+        </where>
+    </select>
+
+    <select id="getAllCompany" resultType="org.sang.bean.business.qo.CompanyQo">
+        SELECT
+            c.*,
+            i.name as industryName,
+            b.name as bankName
+        from
+            company c
+            left join industry i on c.industryId = i.code
+            left join bank b on c.bankId = b.id
+        <where>
+            <if test="keywords!=null">
+                AND c.COName LIKE concat('%',#{keywords},'%')
+            </if>
+        </where>
+        ORDER BY c.id DESC limit #{start},#{count};
+    </select>
+
+    <insert id="addCompany" parameterType="org.sang.bean.business.Company">
+        INSERT INTO company
+        (CONumber, COName, representative, idNumber, phoneNumber, uscc, establishTime,
+         registeredCapital, taxpayerType, registrationType, technology, industryId,
+         website, address, postalCode, contact, contactPhone, fax, bankAccount,
+         bankBranch, bankId, treasurer, treasurerPhone, email, agreementId)
+        values (#{CONumber}, #{COName}, #{representative}, #{idNumber}, #{phoneNumber}, #{uscc},
+        #{establishTime}, #{registeredCapital}, #{taxpayerType}, #{registrationType}, #{technology},
+        #{industryId}, #{website}, #{address}, #{postalCode}, #{contact}, #{contactPhone}, #{fax},
+        #{bankAccount}, #{bankBranch}, #{bankId}, #{treasurer}, #{treasurerPhone}, #{email}, #{agreementId})
+    </insert>
+
+    <select id="getCompanyById" parameterType="int" resultType="org.sang.bean.business.qo.CompanyQo">
+        SELECT
+            c.*,
+            i.name as industryName,
+            b.name as bankName
+        from
+            company c
+            left join industry i on c.industryId = i.code
+            left join bank b on c.bankId = b.id
+        where c.id=#{id}
+    </select>
+
+    <delete id="deleteCompany">
+        DELETE FROM company WHERE id IN
+        <foreach collection="ids" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </delete>
+
+    <update id="updateCompany">
+        UPDATE company
+        SET
+            CONumber=#{CONumber}, COName=#{COName}, representative=#{representative}, idNumber=#{idNumber},
+            phoneNumber=#{phoneNumber}, uscc=#{uscc},establishTime=#{establishTime},
+            registeredCapital=#{registeredCapital}, taxpayerType=#{taxpayerType},
+            registrationType=#{registrationType}, technology=#{technology},industryId=#{industryId},
+            website=#{website}, address=#{address}, postalCode=#{postalCode}, contact=#{contact},
+            contactPhone=#{contactPhone}, fax=#{fax},bankAccount=#{bankAccount}, bankBranch=#{bankBranch},
+            bankId=#{bankId}, treasurer=#{treasurer}, treasurerPhone=#{treasurerPhone}, email=#{email},
+            agreementId=#{agreementId}
+        WHERE id=#{id}
+    </update>
+</mapper>

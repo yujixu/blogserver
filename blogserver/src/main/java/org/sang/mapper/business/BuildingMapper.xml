@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.sang.mapper.business.BuildingMapper">
+
+    <resultMap id="resultMap" type="org.sang.bean.business.Building" autoMapping="true">
+        <id column="id" property="id"/>
+        <collection property="list" ofType="org.sang.bean.business.Floor" select="org.sang.mapper.business.FloorMapper.getFloorByBuildingId" column="id">
+        </collection>
+    </resultMap>
+
+    <resultMap id="rsrcResultMap" type="org.sang.bean.business.Building" autoMapping="true">
+        <id column="id" property="id"/>
+        <collection property="list" ofType="org.sang.bean.business.Floor" select="org.sang.mapper.business.FloorMapper.getRsrcFloorByBuildingId" column="id">
+        </collection>
+    </resultMap>
+
+    <select id="getBuilding" resultType="org.sang.bean.business.Building">
+        SELECT* from building
+    </select>
+
+    <select id="getBuildingCount" resultType="int">
+        SELECT count(*) FROM building
+        <where>
+            <if test="keywords!=null" >
+                AND name LIKE concat('%',#{keywords},'%')
+            </if>
+        </where>
+    </select>
+
+    <select id="getAllBuilding" resultType="org.sang.bean.business.Building">
+        SELECT* FROM building
+        <where>
+            <if test="keywords!=null">
+                AND name LIKE concat('%',#{keywords},'%')
+            </if>
+        </where>
+    </select>
+
+    <insert id="addBuilding" parameterType="org.sang.bean.business.Building">
+        INSERT INTO building
+        (name, number, floor, `explain`, parkId)
+        values (#{name},#{number},#{floor},#{explain},#{parkId})
+    </insert>
+
+    <select id="getBuildingById" parameterType="int" resultType="org.sang.bean.business.Building">
+        SELECT* from building where id=#{id}
+    </select>
+
+    <select id="getBuildingByParkId" parameterType="int" resultType="org.sang.bean.business.Building" resultMap="resultMap">
+        SELECT* from building where parkId=#{id}
+    </select>
+
+    <select id="getRsrcBuildingByParkId" parameterType="int" resultType="org.sang.bean.business.Building" resultMap="rsrcResultMap">
+        SELECT* from building where parkId=#{id}
+    </select>
+
+    <delete id="deleteBuilding">
+        DELETE FROM building WHERE id=#{id}
+    </delete>
+
+    <update id="updateBuilding">
+        UPDATE building  SET name=#{name},number=#{number},floor=#{floor},`explain`=#{explain} WHERE id=#{id}
+    </update>
+</mapper>

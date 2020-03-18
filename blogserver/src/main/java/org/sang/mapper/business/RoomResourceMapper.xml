@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.sang.mapper.business.RoomResourceMapper">
+
+    <select id="getRoomResource" resultType="org.sang.bean.business.qo.RoomResourceQo">
+        SELECT
+            r.*,
+            p.name as parkName,
+            b.name as buildingName,
+            r2.number as roomNumber
+        FROM
+            room_resource r
+            left join room r2 on r.roomId = r2.id
+            left join floor f on r2.floorId = f.id
+            left join building b on f.buildingId = b.id
+            left join park p on b.parkId = p.id
+    </select>
+
+    <select id="getRoomResourceCount" resultType="int">
+        SELECT count(*)
+        FROM
+            room_resource r
+            left join room r2 on r.roomId = r2.id
+            left join floor f on r2.floorId = f.id
+            left join building b on f.buildingId = b.id
+            left join park p on b.parkId = p.id
+        <where>
+            <if test="buildingId!=null and buildingId!=''">
+                AND b.id=#{buildingId}
+            </if>
+            <if test="floorId!=null and floorId!=''">
+                AND f.id=#{floorId}
+            </if>
+            <if test="parkId!=null and parkId!=''">
+                AND p.id=#{parkId}
+            </if>
+            <if test="keywords!=null" >
+                AND r2.number LIKE concat('%',#{keywords},'%')
+            </if>
+        </where>
+    </select>
+
+    <select id="getByParkAndFloor" resultType="org.sang.bean.business.qo.RoomResourceQo">
+        SELECT
+            r.*,
+            p.name as parkName,
+            b.name as buildingName,
+            r2.number as roomNumber
+        FROM
+            room_resource r
+            left join room r2 on r.roomId = r2.id
+            left join floor f on r2.floorId = f.id
+            left join building b on f.buildingId = b.id
+            left join park p on b.parkId = p.id
+        <where>
+            <if test="buildingId!=null and buildingId!=''">
+                AND b.id=#{buildingId}
+            </if>
+            <if test="floorId!=null and floorId!=''">
+                AND f.id=#{floorId}
+            </if>
+            <if test="parkId!=null and parkId!=''">
+                AND p.id=#{parkId}
+            </if>
+        </where>
+    </select>
+
+    <select id="getAllRoomResource" resultType="org.sang.bean.business.qo.RoomResourceQo">
+        SELECT
+        r.*,
+        p.name as parkName,
+        b.name as buildingName,
+        r2.number as roomNumber
+        FROM
+        room_resource r
+        left join room r2 on r.roomId = r2.id
+        left join floor f on r2.floorId = f.id
+        left join building b on f.buildingId = b.id
+        left join park p on b.parkId = p.id
+        <where>
+            <if test="buildingId!=null and buildingId!=''">
+                AND b.id=#{buildingId}
+            </if>
+            <if test="floorId!=null and floorId!=''">
+                AND f.id=#{floorId}
+            </if>
+            <if test="parkId!=null and parkId!=''">
+                AND p.id=#{parkId}
+            </if>
+            <if test="keywords!=null" >
+                AND r2.number LIKE concat('%',#{keywords},'%')
+            </if>
+        </where>
+        ORDER BY r.id DESC limit #{start},#{count};
+    </select>
+
+    <insert id="addRoomResource" parameterType="org.sang.bean.business.RoomResource">
+        INSERT INTO room_resource
+        (roomId, area, rent, propertyFee, broadbandFee, elevatorFee,
+         electricCharge, waterCharge, introduce, renovation, state)
+        values (#{roomId},#{area}, #{rent}, #{propertyFee}, #{broadbandFee},
+                #{elevatorFee}, #{electricCharge}, #{waterCharge}, #{introduce},
+                #{renovation}, #{state})
+    </insert>
+
+    <select id="getRoomResourceByFloorId" parameterType="int" resultType="org.sang.bean.business.qo.RoomResourceQo">
+        SELECT
+            r.*,
+            r2.number as roomNumber
+        FROM
+            room_resource r
+        left join room r2 on r.roomId = r2.id
+        left join floor f on r2.floorId = f.id
+        where f.id=#{id}
+    </select>
+
+    <select id="getRoomResourceById" parameterType="int" resultType="org.sang.bean.business.qo.RoomResourceQo">
+        SELECT* from room_resource where id=#{id}
+    </select>
+
+    <delete id="deleteRoomResource">
+        DELETE FROM room_resource WHERE id IN
+        <foreach collection="ids" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </delete>
+
+    <update id="updateRoomResource">
+        UPDATE room_resource  SET roomId=#{roomId}, area=#{area}, rent=#{rent}, propertyFee=#{propertyFee},
+                                  broadbandFee=#{broadbandFee}, elevatorFee=#{elevatorFee}, electricCharge=#{electricCharge},
+                                  waterCharge=#{waterCharge}, introduce=#{introduce}, renovation=#{renovation}, state=#{state}
+                            where id=#{id}
+    </update>
+</mapper>

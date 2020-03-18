@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.sang.mapper.warehouse.WarehouseReceiptDetailMapper">
+    <select id="getWarehouseReceiptDetailByPId" parameterType="int" resultType="org.sang.bean.warehouse.qo.WarehouseReceiptDetailQo">
+        SELECT
+            w.*,
+            m.number as materialNumber,
+            m.name as materialName,
+            m.baseUnitName as baseUnit,
+            m.materialTypeName as materialType,
+            m.materialModel as materialModel
+        FROM
+            warehouse_receipt_detail w
+            left join material m on w.materialId = m.id
+        where
+            w.pId=#{pid}
+    </select>
+
+    <insert id="addWarehouseReceiptDetails" parameterType="java.util.List">
+        INSERT INTO warehouse_receipt_detail
+        (warehouseId, materialId, pId, purorder, receipt, price, amount)
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            #{item.warehouseId},
+            #{item.materialId},
+            #{item.pId},
+            #{item.purOrder},
+            #{item.receipt},
+            #{item.price},
+            #{item.amount}
+            )
+        </foreach>
+    </insert>
+
+    <delete id="deleteWarehouseReceiptDetails">
+        DELETE FROM warehouse_receipt_detail WHERE pId IN
+        <foreach collection="pIds" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </delete>
+
+    <update id="updateWarehouseReceiptDetail">
+        update warehouse_receipt_detail
+        set purorder=#{purOrder}
+        where id=#{id}
+    </update>
+</mapper>

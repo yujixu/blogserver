@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.sang.mapper.purchase.PurContractDetailMapper">
+    <select id="getContractDetailByPId" parameterType="int" resultType="org.sang.bean.purchase.qo.PurContractDetailQo">
+        SELECT
+            p.*,
+            m.number as materialNumber,
+            m.name as materialName,
+            m.baseUnitName as baseUnit,
+            m.materialTypeName as materialType,
+            m.materialModel as materialModel
+        FROM purcontract_detail p
+             left join material m on p.materialId = m.id
+        where p.pId=#{pid}
+    </select>
+
+    <insert id="addContractDetails" parameterType="java.util.List">
+        INSERT INTO purcontract_detail
+        (pId, materialId, purOrder, price, amount)
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+                #{item.pId},
+                #{item.materialId},
+                #{item.purOrder},
+                #{item.price},
+                #{item.amount}
+            )
+        </foreach>
+    </insert>
+
+    <delete id="deleteContractDetails">
+        DELETE FROM purcontract_detail WHERE pId IN
+        <foreach collection="pIds" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

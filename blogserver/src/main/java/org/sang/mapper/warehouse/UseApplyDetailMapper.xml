@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.sang.mapper.warehouse.UseApplyDetailMapper">
+    <select id="getUseApplyDetail" parameterType="int" resultType="org.sang.bean.warehouse.qo.UseApplyDetailQo">
+        SELECT
+            u.*,
+            ws.stock as stock,
+            m.number as materialNumber,
+            m.name as materialName,
+            m.baseUnitName as baseUnit,
+            m.materialTypeName as materialType,
+            m.materialModel as materialModel
+        FROM
+            use_apply_detail u
+            left join warehouse_stock ws on u.stockId = ws.id
+            left join material m on m.id = ws.materialId
+        where
+            u.pId=#{pid}
+    </select>
+
+    <insert id="addUseApplyDetails" parameterType="java.util.List">
+        INSERT INTO use_apply_detail
+        (stockId, useNum, pId)
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+                #{item.stockId},
+                #{item.useNum},
+                #{item.pId}
+            )
+        </foreach>
+    </insert>
+
+    <delete id="deleteUseApplyDetails">
+        DELETE FROM use_apply_detail WHERE pId IN
+        <foreach collection="pIds" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

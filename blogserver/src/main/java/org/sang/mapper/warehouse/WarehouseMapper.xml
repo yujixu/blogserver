@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.sang.mapper.warehouse.WarehouseMapper">
+
+    <select id="getWarehouse" resultType="org.sang.bean.warehouse.Warehouse">
+        SELECT* from warehouse
+    </select>
+
+    <select id="getWarehouseCount" resultType="int">
+        SELECT count(*) FROM warehouse
+        <where>
+            <if test="keywords!=null" >
+                AND name LIKE concat('%',#{keywords},'%')
+            </if>
+        </where>
+    </select>
+
+    <select id="getAllWarehouse" resultType="org.sang.bean.warehouse.Warehouse">
+        SELECT* FROM warehouse
+        <where>
+            <if test="keywords!=null">
+                AND name LIKE concat('%',#{keywords},'%')
+            </if>
+        </where>
+        ORDER BY id DESC limit #{start},#{count};
+    </select>
+
+    <insert id="addWarehouse" parameterType="org.sang.bean.warehouse.Warehouse">
+        INSERT INTO warehouse
+        (name, number)
+        values (#{name},#{number})
+    </insert>
+
+    <select id="getWarehouseById" parameterType="int" resultType="org.sang.bean.warehouse.Warehouse">
+        SELECT* from warehouse where id=#{id}
+    </select>
+
+    <delete id="deleteWarehouse">
+        DELETE FROM warehouse WHERE id IN
+        <foreach collection="ids" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </delete>
+
+    <update id="updateWarehouse">
+        UPDATE warehouse  SET name=#{name},number=#{number} WHERE id=#{id}
+    </update>
+</mapper>

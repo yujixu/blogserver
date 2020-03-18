@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.sang.mapper.area.OutAreaMapper">
+
+    <select id="getOutArea" resultType="org.sang.bean.area.qo.OutAreaQo">
+        SELECT o.*, p.name as parkName
+        FROM out_area o
+        left join park p on o.parkId = p.id
+    </select>
+
+    <select id="getOutAreaCount" resultType="int">
+        SELECT count(*) FROM out_area
+        <where>
+            <if test="keywords!=null" >
+                AND name LIKE concat('%',#{keywords},'%')
+            </if>
+        </where>
+    </select>
+
+    <select id="getAllOutArea" resultType="org.sang.bean.area.qo.OutAreaQo">
+        SELECT o.*, p.name as parkName
+        FROM out_area o
+        left join park p on o.parkId = p.id
+        <where>
+            <if test="keywords!=null">
+                AND o.name LIKE concat('%',#{keywords},'%')
+            </if>
+        </where>
+        ORDER BY o.id DESC limit #{start},#{count};
+    </select>
+
+    <insert id="addOutArea" parameterType="org.sang.bean.area.OutArea">
+        INSERT INTO out_area
+        (name, number, parkId, `explain`)
+        values (#{name},#{number}, #{parkId}, #{explain})
+    </insert>
+
+    <select id="getOutAreaById" parameterType="int" resultType="org.sang.bean.area.qo.OutAreaQo">
+        SELECT o.*, p.name as parkName
+        FROM out_area o
+        left join park p on o.parkId = p.id
+        where o.id=#{id}
+    </select>
+
+    <delete id="deleteOutArea">
+        DELETE FROM out_area WHERE id IN
+        <foreach collection="ids" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </delete>
+
+    <update id="updateOutArea">
+        UPDATE out_area  SET name=#{name},number=#{number},parkId=#{parkId}, `explain`=#{explain} WHERE id=#{id}
+    </update>
+</mapper>

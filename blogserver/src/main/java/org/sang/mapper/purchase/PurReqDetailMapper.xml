@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.sang.mapper.purchase.PurReqDetailMapper">
+    <select id="getPurReqDetailByPId" parameterType="int" resultType="org.sang.bean.purchase.PurReqDetail">
+        SELECT* FROM purreq_detail where purreq_detail.pId=#{pid}
+    </select>
+
+    <insert id="addPurReqDetails" parameterType="java.util.List">
+        INSERT INTO purreq_detail
+        (materialId, pId, purQty, amount, price, materialName, baseUnit, materialNumber, materialType, materialModel, states)
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+                #{item.materialId},
+                #{item.pId},
+                #{item.purQty},
+                #{item.amount},
+                #{item.price},
+                #{item.materialName},
+                #{item.baseUnit},
+                #{item.materialNumber},
+                #{item.materialType},
+                #{item.materialModel},
+                #{item.states}
+            )
+        </foreach>
+    </insert>
+
+    <delete id="deletePurReqDetails">
+        DELETE FROM purreq_detail WHERE pId IN
+        <foreach collection="pIds" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </delete>
+
+    <update id="submitPurReqDetails">
+        UPDATE purreq_detail SET states="EXCUTE" WHERE pId=#{pId}
+    </update>
+
+    <update id="check">
+        <foreach collection="list" item="item" index="index" separator=";">
+            update purreq_detail
+            <set>
+                purOrdered=#{item.purOrdered},
+                states=#{item.states}
+            </set>
+            where id = #{item.id}
+        </foreach>
+    </update>
+
+    <select id="getUnClosePurReqDetail" parameterType="int" resultType="org.sang.bean.purchase.PurReqDetail">
+        SELECT* FROM purreq_detail where purreq_detail.pId=#{pid} and states!="CLOSE"
+    </select>
+</mapper>

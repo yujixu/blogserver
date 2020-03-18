@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.sang.mapper.basedata.BaseUnitMapper">
+
+    <select id="getBaseUnit" resultType="org.sang.bean.basedata.BaseUnit">
+        SELECT* from baseunit
+    </select>
+
+    <select id="getBaseUnitCount" resultType="int">
+        SELECT count(*) FROM baseunit
+        <where>
+            <if test="keywords!=null" >
+                AND name LIKE concat('%',#{keywords},'%')
+            </if>
+        </where>
+    </select>
+
+    <select id="getAllBaseUnit" resultType="org.sang.bean.basedata.BaseUnit">
+        SELECT* FROM baseunit
+        <where>
+            <if test="keywords!=null">
+                AND name LIKE concat('%',#{keywords},'%')
+            </if>
+        </where>
+        ORDER BY id DESC limit #{start},#{count};
+    </select>
+
+    <insert id="addBaseUnit" parameterType="org.sang.bean.basedata.BaseUnit">
+        INSERT INTO baseunit
+        (name, number)
+        values (#{name},#{number})
+    </insert>
+
+    <select id="getBaseUnitById" parameterType="int" resultType="org.sang.bean.basedata.BaseUnit">
+        SELECT* from baseunit where id=#{id}
+    </select>
+
+    <delete id="deleteBaseUnit">
+        DELETE FROM baseunit WHERE id IN
+        <foreach collection="ids" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </delete>
+
+    <update id="updateBaseUnit">
+        UPDATE baseunit  SET name=#{name},number=#{number} WHERE id=#{id}
+    </update>
+</mapper>

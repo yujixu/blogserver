@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.sang.mapper.warehouse.WarehouseOutMapper">
+    <insert id="addNewWarehouseOut" parameterType="org.sang.bean.warehouse.WarehouseOut" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO warehouse_out
+        SET number=#{number},name=#{name},useApplyId=#{useApplyId},employeeId=#{employeeId}
+            ,outTime=#{outTime},remarks=#{remarks}
+    </insert>
+
+    <select id="getWarehouseOutCount" resultType="int">
+        SELECT count(*) FROM warehouse_out
+        <where>
+            <if test="keywords!=null" >
+                AND name LIKE concat('%',#{keywords},'%')
+            </if>
+        </where>
+    </select>
+
+    <select id="getWarehouseOut" resultType="org.sang.bean.warehouse.qo.WarehouseOutQo">
+        SELECT
+            w.*,
+            e.name as employeeName,
+            ua.reason as reason
+        from warehouse_out w
+        left join employee e on w.employeeId = e.id
+        left join use_apply ua on w.useApplyId = ua.id
+        <where>
+            <if test="keywords!=null">
+                AND w.name LIKE concat('%',#{keywords},'%')
+            </if>
+        </where>
+        ORDER BY w.id DESC limit #{start},#{count};
+    </select>
+
+    <select id="getWarehouseOutById" parameterType="int" resultType="org.sang.bean.warehouse.qo.WarehouseOutQo">
+        SELECT
+            w.*,
+            e.name as employeeName,
+            ua.reason as reason,
+            ua.name as useApplyName
+        from warehouse_out w
+            left join employee e on w.employeeId = e.id
+            left join use_apply ua on w.useApplyId = ua.id
+        where
+            w.id=#{id}
+    </select>
+
+    <delete id="deleteWarehouseOut">
+        DELETE FROM warehouse_out WHERE id IN
+        <foreach collection="ids" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </delete>
+
+    <update id="updateWarehouseOut">
+        UPDATE warehouse_out
+        SET number=#{number},name=#{name},useApplyId=#{useApplyId},employeeId=#{employeeId}
+            ,outTime=#{outTime},remarks=#{remarks}
+        where id = #{id}
+    </update>
+
+</mapper>

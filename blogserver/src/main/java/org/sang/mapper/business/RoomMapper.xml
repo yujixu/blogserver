@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.sang.mapper.business.RoomMapper">
+
+    <select id="getRoom" resultType="org.sang.bean.business.Room">
+        SELECT* from room
+    </select>
+
+    <select id="getRoomCount" resultType="int">
+        SELECT count(*) FROM room
+        <where>
+            <if test="keywords!=null" >
+                AND number LIKE concat('%',#{keywords},'%')
+            </if>
+        </where>
+    </select>
+
+    <select id="getAllRoom" resultType="org.sang.bean.business.Room">
+        SELECT* FROM room
+        <where>
+            <if test="keywords!=null">
+                AND number LIKE concat('%',#{keywords},'%')
+            </if>
+        </where>
+    </select>
+
+    <insert id="addRoom" parameterType="org.sang.bean.business.Room">
+        INSERT INTO room
+        (number, floorId, `explain`)
+        values (#{number}, #{floorId}, #{explain})
+    </insert>
+
+    <select id="getRoomById" parameterType="int" resultType="org.sang.bean.business.Room">
+        SELECT* from room where id=#{id}
+    </select>
+
+    <select id="getRoomByFloorId" parameterType="int" resultType="org.sang.bean.business.Room">
+        SELECT* from room where floorId=#{id}
+    </select>
+
+    <delete id="deleteRoom">
+        DELETE FROM room WHERE id=#{id}
+    </delete>
+
+    <delete id="deleteByFloorId">
+        DELETE FROM room WHERE id IN
+        <foreach collection="ids" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </delete>
+
+    <update id="updateRoom">
+        UPDATE room  SET number=#{number}, floorId=#{floorId}, `explain`=#{explain} WHERE id=#{id}
+    </update>
+</mapper>

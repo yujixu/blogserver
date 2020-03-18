@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.sang.mapper.business.ParkMapper">
+
+    <resultMap id="resultMap" type="org.sang.bean.business.Park" autoMapping="true">
+        <id column="id" property="id"/>
+        <collection property="list" ofType="org.sang.bean.business.Building" select="org.sang.mapper.business.BuildingMapper.getBuildingByParkId" column="id">
+        </collection>
+    </resultMap>
+
+    <resultMap id="rsrcResultMap" type="org.sang.bean.business.Park" autoMapping="true">
+        <id column="id" property="id"/>
+        <collection property="list" ofType="org.sang.bean.business.Building" select="org.sang.mapper.business.BuildingMapper.getRsrcBuildingByParkId" column="id">
+        </collection>
+    </resultMap>
+
+    <select id="getPark" resultType="org.sang.bean.business.Park" resultMap="resultMap">
+        SELECT* from park
+    </select>
+
+    <select id="getRsrcPark" resultType="org.sang.bean.business.Park" resultMap="rsrcResultMap">
+        SELECT* from park
+    </select>
+
+    <select id="getParkCount" resultType="int">
+        SELECT count(*) FROM park
+        <where>
+            <if test="keywords!=null" >
+                AND name LIKE concat('%',#{keywords},'%')
+            </if>
+        </where>
+    </select>
+
+    <select id="getAllPark" resultType="org.sang.bean.business.Park" resultMap="resultMap">
+        SELECT* FROM park
+        <where>
+            <if test="keywords!=null">
+                AND name LIKE concat('%',#{keywords},'%')
+            </if>
+        </where>
+    </select>
+
+    <insert id="addPark" parameterType="org.sang.bean.business.Park">
+        INSERT INTO park
+        (name, number)
+        values (#{name},#{number})
+    </insert>
+
+    <select id="getParkById" parameterType="int" resultType="org.sang.bean.business.Park">
+        SELECT* from park where id=#{id}
+    </select>
+
+    <update id="updatePark">
+        UPDATE park  SET name=#{name},number=#{number} WHERE id=#{id}
+    </update>
+</mapper>

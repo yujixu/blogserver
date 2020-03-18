@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.sang.mapper.company.EmployeeMapper">
+
+    <select id="getEmployee" resultType="org.sang.bean.company.Employee">
+        SELECT* from employee
+    </select>
+
+    <select id="getPurEmployee" resultType="org.sang.bean.company.Employee">
+        SELECT* from employee where number like 'CGB%'
+    </select>
+
+    <select id="getEmployeeCount" resultType="int">
+        SELECT count(*) FROM employee
+        <where>
+            <if test="keywords!=null" >
+                AND name LIKE concat('%',#{keywords},'%')
+            </if>
+        </where>
+    </select>
+
+    <select id="getAllEmployee" resultType="org.sang.bean.company.Employee">
+        SELECT* FROM employee
+        <where>
+            <if test="keywords!=null">
+                AND name LIKE concat('%',#{keywords},'%')
+            </if>
+        </where>
+        ORDER BY id DESC limit #{start},#{count};
+    </select>
+
+    <insert id="addEmployee" parameterType="org.sang.bean.company.Employee">
+        INSERT INTO employee
+        (employeeType, name, deptId, position, entryStatus
+        , entryDate, expiration, politicalOutlook, education
+        , major, university, certificate, birthday, sex, email
+        , idNumber, phoneNumber, registered, maritalStatus, number)
+        values (#{employeeType}, #{name}, #{deptId}, #{position}
+                , #{entryStatus}, #{entryDate}, #{expiration}
+                , #{politicalOutlook}, #{education}, #{major}
+                , #{university}, #{certificate}, #{birthday}
+                , #{sex}, #{email}, #{idNumber}, #{phoneNumber}
+                , #{registered}, #{maritalStatus}, #{number})
+    </insert>
+
+    <select id="getEmployeeById" parameterType="int" resultType="org.sang.bean.company.Employee">
+        SELECT* from employee where id=#{id}
+    </select>
+
+    <delete id="deleteEmployee">
+        DELETE FROM employee WHERE id IN
+        <foreach collection="ids" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </delete>
+
+    <update id="updateEmployee" parameterType="org.sang.bean.company.Employee">
+        UPDATE employee  SET employeeType=#{employeeType}, name=#{name}, deptId=#{deptId}
+                            , position=#{position}, entryStatus=#{entryStatus}
+                            , entryDate=#{entryDate}, expiration=#{expiration}
+                            , major=#{major}, university=#{university}, certificate=#{certificate}
+                            , birthday=#{birthday}, email=#{email}, idNumber=#{idNumber}
+                            , phoneNumber=#{phoneNumber}, registered=#{registered}
+                            , politicalOutlook=#{politicalOutlook}, education=#{education}
+                            , sex=#{sex}, maritalStatus=#{maritalStatus}, number=#{number}
+        WHERE id=#{id}
+    </update>
+</mapper>

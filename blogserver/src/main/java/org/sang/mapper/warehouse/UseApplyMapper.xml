@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.sang.mapper.warehouse.UseApplyMapper">
+    <insert id="addUseApply" parameterType="org.sang.bean.warehouse.UseApply" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO use_apply
+        SET number=#{number},name=#{name},state=#{state}
+            ,reason=#{reason},applicantId=#{applicantId}, applyTime=#{applyTime}
+    </insert>
+
+    <select id="getUseApplyCount" resultType="int">
+        SELECT count(*) FROM use_apply
+        <where>
+            <if test="keywords!=null" >
+                AND name LIKE concat('%',#{keywords},'%')
+            </if>
+        </where>
+    </select>
+
+    <select id="getUseApply" resultType="org.sang.bean.warehouse.qo.UseApplyQo">
+        SELECT
+            u.*,
+            e.name as applicant
+        FROM
+            use_apply u
+            left join employee e on u.applicantId = e.id
+        <where>
+            <if test="keywords!=null">
+                AND u.name LIKE concat('%',#{keywords},'%')
+            </if>
+        </where>
+        ORDER BY u.id DESC limit #{start},#{count};
+    </select>
+
+    <select id="getUseApplyById" parameterType="int" resultType="org.sang.bean.warehouse.UseApply">
+        SELECT* from use_apply where id=#{id}
+    </select>
+
+    <delete id="deleteUseApply">
+        DELETE FROM use_apply WHERE id IN
+        <foreach collection="ids" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="getCheckUseApply" resultType="org.sang.bean.warehouse.UseApply">
+        SELECT* FROM use_apply where state = "已审核" and isOut="否"
+    </select>
+
+    <update id="updateUseApply">
+        UPDATE use_apply
+        SET number=#{number},name=#{name},state=#{state}
+            ,reason=#{reason},applicantId=#{applicantId}
+        where id = #{id}
+    </update>
+
+    <update id="checkUseApply">
+        UPDATE use_apply SET state='已审核' WHERE id=#{id}
+    </update>
+
+    <update id="outUseApply">
+        UPDATE use_apply SET isOut='是' WHERE id=#{id}
+    </update>
+</mapper>
