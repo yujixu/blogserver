@@ -21,7 +21,8 @@ public class WarehouseStockServiceImpl {
         List<WarehouseStock> toAddList = new ArrayList<>();
         List<WarehouseStock> toUpdateList = new ArrayList<>();
         for(WarehouseStock warehouseStock : warehouseStockList){
-            WarehouseStock toUpdateWarehouseStock = warehouseStockMapper.getStockByIdAndPrice(warehouseStock.getMaterialId(), warehouseStock.getWarehouseId(), warehouseStock.getPrice());
+            WarehouseStock toUpdateWarehouseStock = warehouseStockMapper.getStockByIdAndPrice(warehouseStock.getMaterialId()
+                    , warehouseStock.getWarehouseId(), warehouseStock.getPrice());
             if(toUpdateWarehouseStock!=null){
                 toUpdateWarehouseStock.setStock(warehouseStock.getStock().add(toUpdateWarehouseStock.getStock()));
                 toUpdateWarehouseStock.setLastReceiptDate(warehouseStock.getLastReceiptDate());

@@ -2,8 +2,8 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import Login from '@/components/Login'
 import Home from '@/components/Home'
-import ArticleList from '@/components/blog/ArticleList'
-import CateMana from '@/components/CateMana'
+// import ArticleList from '@/components/blog/ArticleList'
+// import CateMana from '@/components/CateMana'
 import DataCharts from '@/components/DataCharts'
 import PostArticle from '@/components/blog/PostArticle'
 import UserMana from '@/components/UserMana'
@@ -33,7 +33,7 @@ import AddPlantUnit from "../components/plant/AddPlantUnit";
 import RoomResourceTable from "../components/business/RoomResourceTable";
 import CompanyTable from "../components/business/CompanyTable";
 import AddCompany from "../components/business/AddCompany";
-import QueryCompany from "../components/business/QueryCompany";
+// import QueryCompany from "../components/business/QueryCompany";
 Vue.use(Router)
 
 export default new Router({
@@ -54,14 +54,15 @@ export default new Router({
       name: '基础管理',
       iconCls: 'fa fa-file-text-o',
       children: [
+        // {
+        //   path: '/articleList',
+        //   name: '公告列表',
+        //   component: ArticleList,
+        //   meta: {
+        //     keepAlive: true
+        //   }
+        // },
         {
-          path: '/articleList',
-          name: '公告列表',
-          component: ArticleList,
-          meta: {
-            keepAlive: true
-          }
-        }, {
           path: '/companyList',
           name: '公司管理',
           component: CompanyList,
@@ -265,19 +266,21 @@ export default new Router({
           component: UserMana
         }
       ]
-    }, {
-      path: '/home',
-      component: Home,
-      name: '栏目管理',
-      children: [
-        {
-          path: '/cateMana',
-          iconCls: 'fa fa-reorder',
-          name: '栏目管理',
-          component: CateMana
-        }
-      ]
-    }, {
+    },
+    // {
+    //   path: '/home',
+    //   component: Home,
+    //   name: '栏目管理',
+    //   children: [
+    //     {
+    //       path: '/cateMana',
+    //       iconCls: 'fa fa-reorder',
+    //       name: '栏目管理',
+    //       component: CateMana
+    //     }
+    //   ]
+    // },
+    {
       path: '/home',
       component: Home,
       name: '数据统计',
